@@ -3,9 +3,10 @@ import openpyxl
 from openpyxl import load_workbook
 import sqlite3
 
+excel_file = f"../test_plan_change.xlsx"
+
 def write_excel(test_plan):
 
-    excel_file = f"test_plan_change.xlsx"
 
     try:
         workbook = load_workbook(excel_file)
@@ -28,53 +29,64 @@ def write_excel(test_plan):
     sheet1.append(head)
     conn = sqlite3.connect('all_tc_details.db')
     data = conn.execute('''SELECT * FROM Alltcdetails''')
+    i =1
     for line in data:
+        line = (i,)+line
         sheet1.append(line)
+        i+=1
     column_widths = {'A': 10, 'B': 20, 'C': 50 ,'D':30,'E':30}  # Specify the column widths as desired
 
     for column, width in column_widths.items():
                 sheet1.column_dimensions[column].width = width
-    workbook.save()
-
-    data = conn.execute('''SELECT * FROM Test_plan_changes''')
+    workbook.save(excel_file)
     tc_changes = []
-    for line in data:
-         tc_changes.append(line)
 
-    data = conn.execute('''SELECT * FROM Summary_changes''')
+    try:
+        data = conn.execute('''SELECT * FROM Test_plan_changes''')
+        for line in data:
+            tc_changes.append(line)
+    except:
+         pass
+    
+
     summary_changes = []
-    for line in data:
-         summary_changes.append(line)
+    try:
+        data = conn.execute('''SELECT * FROM Summary_changes''')
+        for line in data:
+            summary_changes.append(line)
+    except:
+         pass
+    
     conn.close()
     if "Test_Summary_Changes" not in sheet_names:
 
         sheet = workbook.create_sheet("Test_Summary_Changes",1)
-        sheet.append(["Date of Run"	, "Cluster Name",	"Test Case Name",	"Test Case ID",	"Test Plan",	"Change Type"])
+        sheet.append(["Date of Run"	, "Cluster Name",	"Test Case Name",	"Test Case ID"])
 
     else:
         sheet = workbook["Test_Summary_Changes"]
 
     for i in range(len(tc_changes)):
-        for j, value in enumerate(tc_changes[i]):   
-            sheet.insert_rows(2)                                                                              
+        sheet.insert_rows(2)
+        for j, value in enumerate(tc_changes[i]):                                                                                 
             sheet.cell(row=i + 2, column=j + 1, value=value)
     column_widths = {'A': 10, 'B': 20, 'C': 50 ,'D':30,'E':30}  # Specify the column widths as desired
 
     for column, width in column_widths.items():
                 sheet1.column_dimensions[column].width = width
     
-    workbook.save()
+    workbook.save(excel_file)
 
     if "Test_plan_Changes" not in sheet_names:
 
         sheet = workbook.create_sheet("Test_plan_Changes",2)
-        sheet.append(["Date of Run"," Commit","Cluster/Testcase","Changes","Column"])
+        sheet.append(["Date of Run"," Commit","Cluster/Testcase","Changes"])
     else:
         sheet = workbook["Test_plan_Changes"]
 
     for i in range(len(tc_changes)):
-        for j, value in enumerate(tc_changes[i]):   
-            sheet.insert_rows(2)                                                                              
+        sheet.insert_rows(2) 
+        for j, value in enumerate(tc_changes[i]):                                                                                
             sheet.cell(row=i + 2, column=j + 1, value=value)
 
     column_widths = {'A': 10, 'B': 20, 'C': 50 ,'D':30,'E':30}  # Specify the column widths as desired
@@ -82,7 +94,7 @@ def write_excel(test_plan):
     for column, width in column_widths.items():
                 sheet1.column_dimensions[column].width = width
 
-    workbook.save()
+    workbook.save(excel_file)
          
     cluster_codes = []
 
@@ -106,7 +118,7 @@ def write_excel(test_plan):
                 workbook.create_sheet(code)
 
     tcsummary(workbook, test_plan)
-    workbook.save()
+    workbook.save(excel_file)
 
 
 
@@ -124,8 +136,9 @@ def tcsummary(workbook, updated_data):
 
         testcases = updated_data[cluster]
         for testcase in testcases:
-            tcfn = testcase["Test Case Name"]
-            sheet.append([tcfn])
+            testcase_name = testcase["Test Case Name"]
+            print(testcase_name)
+            sheet.append([testcase_name])
             sheet.append([""])
             sheet.append(["Purpose"])
             sheet.append([testcase["Purpose"]])
@@ -135,7 +148,7 @@ def tcsummary(workbook, updated_data):
                 sheet.append([pics])
             sheet.append([""])
             sheet.append(["Pre-condition"])
-            if testcase["Pre-condition"] == "Nil":
+            if testcase["Pre-condition"] =="Nil":
                 sheet.append(["Nil"])
             else:
                 head = list(testcase["Pre-condition"].keys())
@@ -160,4 +173,4 @@ def tcsummary(workbook, updated_data):
             sheet.append([""])
             sheet.append([""])
             
-            workbook.save()
+            workbook.save(excel_file)

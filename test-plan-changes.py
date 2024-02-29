@@ -9,10 +9,10 @@ import sqlite3
 import re
 import os
 
-json_file = "TC_Summary.json"
+json_file = "../TC_Summary.json"
 
-app = "/home/grl/Downloads/allclusters.html"
-main = "/home/grl/Downloads/index.html"
+app = "/home/grl/Downloads/allclusters (1).html"
+main = "/home/grl/Downloads/index (1).html"
 
 def tc_id (head):
     testcase1 = re.search(r'\[(.*?)\]',head)
@@ -97,7 +97,6 @@ def scrap(soup):
 
     alltc_query = """INSERT INTO Alltcdetails (Cluster_Name, Test_case_name, Test_case_id, Test_plan) VALUES (?, ?, ?, ?)"""  
     work_dir = os.getcwd()
-    print(len(h1_tags1t), len(cluster_divs))
 
     for cluster, tpdiv in zip(h1_tags1t, cluster_divs):
         
@@ -126,7 +125,7 @@ def scrap(soup):
             cursor.execute(tc_info_query, info_value)
             conn_tc.commit()
 
-            data_divs = tcdiv.find_all('div', class_="sect4")
+            data_divs = tcdiv.find_all('div', class_=["sect4", "sect5"])
             print(testcase_id_name)
             for data_div in data_divs:
                 test_key = data_div.find(['h7','h5','h6'], {'id': lambda x: x and x.startswith('_')}).text
@@ -187,25 +186,32 @@ if __name__ == '__main__':
     scrap(soup2)
 
     current_test_plan = data_json()
-    changes = 0
+
+
+
+    changes=0
     try:
-        with open(json_file, 'r') as json_file:
-            existing_test_plan = json.load(json_file)
-            changes = test_plan_changes(existing_test_plan, current_test_plan)
+        with open(json_file, 'r') as file:
+            existing_test_plan = json.load(file)
+        changes = test_plan_changes(existing_test_plan, current_test_plan)
         
     except FileNotFoundError:
             existing_test_plan = {}
 
+    with open(json_file, 'w') as file:
+        json.dump(current_test_plan, file, indent=4)
+
     if changes:
         conn = sqlite3.connect('all_tc_details.db')
-        conn.execute('''CREATE TABLE Test_plan_changes (Date DATE , Commit VARCHAR, Testcase VARCHAR, Changes VARCHAR);''')
-        tcchange_query = """INSERT INTO Test_plan_changes (Date, Commit, Testcase, Changes) VALUES (?, ?, ?, ?)"""
+        conn.execute('''CREATE TABLE Test_plan_changes (Date VARCHAR, "Commit" VARCHAR, Testcase VARCHAR, Changes VARCHAR);''')
+        tcchange_query = """INSERT INTO Test_plan_changes (Date, "Commit", Testcase, Changes) VALUES (?, ?, ?, ?)"""
         tp_diff = list_of_changes(changes, version)
         for tp_change in tp_diff:
+            print(tp_change)
             conn.execute(tcchange_query, tp_change)
         conn.commit()
-        conn.execute('''CREATE TABLE Summary_changes (Date DATE , Commit VARCHAR, Testcase VARCHAR, Changes VARCHAR);''')
-        summarychange_query = """INSERT INTO Summary_changes (Date, Commit, Testcase, Changes) VALUES (?, ?, ?, ?)"""
+        conn.execute('''CREATE TABLE Summary_changes (Date VARCHAR, "Commit" VARCHAR, Testcase VARCHAR, Changes VARCHAR);''')
+        summarychange_query = """INSERT INTO Summary_changes (Date, "Commit", Testcase, Changes) VALUES (?, ?, ?, ?)"""
         summary_diff = sumary_change(changes, version)
         for summary_change in summary_diff:
             conn.execute(summarychange_query, summary_change)
@@ -213,6 +219,5 @@ if __name__ == '__main__':
         conn.close()
     write_excel(current_test_plan)
 
-    with open(json_file, 'w') as json_file:
-        json.dump(current_test_plan, json_file, indent=4)
+
 

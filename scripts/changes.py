@@ -79,7 +79,7 @@ def sumary_change(dif , version):
         for k in keys:
             for change in dif["chagedtc"][k]:
                 if change in ["Test Case Name","Test Case ID"]:
-                    diff.append((date,version, k,"this Testcase is modified", change))
+                    diff.append((date,version, k,f"{change} is modified"))
     if dif["addedcluster"]:
         for i in dif["addedcluster"]:
             diff.append((date, version, i, "newly added cluster"))
@@ -94,7 +94,7 @@ def sumary_change(dif , version):
             diff.append((date,version, i,"Testcase is removed from this cluster"))
 
     if not diff:
-        diff.append((date,version,"Nil", f"No changes on {date} ", "Nil"))
+        diff.append((date,version,"Nil", f"No changes on {date} "))
     return diff
 
 def list_of_changes(dif , version):
@@ -105,7 +105,7 @@ def list_of_changes(dif , version):
         keys = list(dif["chagedtc"].keys())
         for k in keys:
             for change in dif["chagedtc"][k]:
-                diff.append((date,version, k,"this Testcase is modified", change))
+                diff.append((date,version, k,f"{change} is modified"))
     if dif["addedcluster"]:
         for i in dif["addedcluster"]:
             diff.append((date, version, i, "newly added cluster"))
@@ -120,5 +120,5 @@ def list_of_changes(dif , version):
             diff.append((date,version, i,"Testcase is removed from this cluster"))
 
     if not diff:
-        diff.append((date,version,"Nil", f"No changes on {date} ", "Nil"))
+        diff.append((date,version,"Nil", f"No changes on {date} "))
     return diff
