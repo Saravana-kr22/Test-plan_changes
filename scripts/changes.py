@@ -73,6 +73,7 @@ def test_plan_changes(existing_data, updated_data):
 
 def sumary_change(dif , version):
     diff = []
+    print(diff)
     date = datetime.date.today().strftime('%Y-%m-%d')
     if dif["chagedtc"]:
         keys = list(dif["chagedtc"].keys())
@@ -95,6 +96,7 @@ def sumary_change(dif , version):
 
     if not diff:
         diff.append((date,version,"Nil", f"No changes on {date} "))
+    print(diff)
     return diff
 
 def list_of_changes(dif , version):

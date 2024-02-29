@@ -68,7 +68,7 @@ def write_excel(test_plan):
 
     for i in range(len(tc_changes)):
         sheet.insert_rows(2)
-        for j, value in enumerate(tc_changes[i]):                                                                                 
+        for j, value in enumerate(summary_changes[i]):                                                                                 
             sheet.cell(row=i + 2, column=j + 1, value=value)
     column_widths = {'A': 10, 'B': 20, 'C': 50 ,'D':30,'E':30}  # Specify the column widths as desired
 
@@ -100,7 +100,6 @@ def write_excel(test_plan):
 
     for test in test_plan:
             tcid = test_plan[test][0]["Test Case ID"]
-            print(tcid)
             sh = re.search(r'-(.*?)-', tcid)
             code = sh.group(1)
             if code == 'LOWPOWER':

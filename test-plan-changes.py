@@ -207,7 +207,6 @@ if __name__ == '__main__':
         tcchange_query = """INSERT INTO Test_plan_changes (Date, "Commit", Testcase, Changes) VALUES (?, ?, ?, ?)"""
         tp_diff = list_of_changes(changes, version)
         for tp_change in tp_diff:
-            print(tp_change)
             conn.execute(tcchange_query, tp_change)
         conn.commit()
         conn.execute('''CREATE TABLE Summary_changes (Date VARCHAR, "Commit" VARCHAR, Testcase VARCHAR, Changes VARCHAR);''')
