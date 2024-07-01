@@ -1,0 +1,14 @@
+beautifulsoup4  
+bs4             
+et-xmlfile      
+lxml            
+numpy           
+openpyxl        
+pandas         
+pip             
+python-dateutil 
+pytz            
+setuptools      
+six             
+soupsieve       
+tzdata          

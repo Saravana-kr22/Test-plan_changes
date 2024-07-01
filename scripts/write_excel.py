@@ -66,10 +66,11 @@ def write_excel(test_plan):
     else:
         sheet = workbook["Test_Summary_Changes"]
 
-    for i in range(len(tc_changes)):
+    for i in range(len(summary_changes)):
         sheet.insert_rows(2)
+        print(1,summary_changes[i])
         for j, value in enumerate(summary_changes[i]):                                                                                 
-            sheet.cell(row=i + 2, column=j + 1, value=value)
+            sheet.cell(row=2, column=j + 1, value=str(value))
     column_widths = {'A': 10, 'B': 20, 'C': 50 ,'D':30,'E':30}  # Specify the column widths as desired
 
     for column, width in column_widths.items():
@@ -86,8 +87,9 @@ def write_excel(test_plan):
 
     for i in range(len(tc_changes)):
         sheet.insert_rows(2) 
+        print(2,tc_changes[i])
         for j, value in enumerate(tc_changes[i]):                                                                                
-            sheet.cell(row=i + 2, column=j + 1, value=value)
+            sheet.cell(row=2, column=j + 1, value=str(value))
 
     column_widths = {'A': 10, 'B': 20, 'C': 50 ,'D':30,'E':30}  # Specify the column widths as desired
 

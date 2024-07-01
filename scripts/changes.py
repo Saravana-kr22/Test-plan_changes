@@ -23,15 +23,15 @@ def test_plan_changes(existing_data, updated_data):
         
         if len(newcluster) >  len(oldcluster):
             for testcase in newcluster:
-                if testcase not in old_cluster_list:
-                    new_testcase.append(testcase) 
+                if testcase["Test Case ID"] not in [k["Test Case ID"] for k in oldcluster]:
+                    new_testcase.append(testcase["Test Case ID"]) 
                     newcluster.pop(newcluster.index(testcase))
             
 
         elif len(newcluster) <  len(oldcluster):
             for testcase in oldcluster:
-                if testcase not in newcluster:
-                    removed_testcase.append(testcase) 
+                if testcase["Test Case ID"] not in [k["Test Case ID"] for k in newcluster]:
+                    removed_testcase.append(testcase["Test Case ID"]) 
                     oldcluster.pop(oldcluster.index(testcase))
 
         for i in range(len(newcluster)):
